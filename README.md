@@ -4,3 +4,4 @@ Fix 2 in release
 hi
 bye hello
 check sync
+final check 
