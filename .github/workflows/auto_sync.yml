@@ -28,12 +28,12 @@ jobs:
 
       - name: Run sync script
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          REPO_OWNER:   ${{ secrets.REPO_OWNER }}
-          REPO_NAME:    ${{ secrets.REPO_NAME }}
-          BASE_BRANCH:  ${{ secrets.BASE_BRANCH }}
-          HEAD_BRANCH:  ${{ secrets.HEAD_BRANCH }}
-          ENABLE_AI:    ${{ secrets.ENABLE_AI }}
-          DRY_RUN:      ${{ secrets.DRY_RUN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # use GitHub Actions token
+          REPO_OWNER: ${{ secrets.REPO_OWNER }}
+          REPO_NAME: ${{ secrets.REPO_NAME }}
+          BASE_BRANCH: ${{ secrets.BASE_BRANCH }}
+          HEAD_BRANCH: ${{ secrets.HEAD_BRANCH }}
+          ENABLE_AI: ${{ secrets.ENABLE_AI }}
+          DRY_RUN: ${{ secrets.DRY_RUN }}
         run: |
           python sync.py
