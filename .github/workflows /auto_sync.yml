@@ -28,7 +28,7 @@ jobs:
 
       - name: Run sync script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  #github token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
           REPO_OWNER: ${{ secrets.REPO_OWNER }}
           REPO_NAME: ${{ secrets.REPO_NAME }}
           BASE_BRANCH: ${{ secrets.BASE_BRANCH }}
