@@ -1,12 +1,35 @@
-name: Test Workflow
+name: Auto Sync release to develop
 
 on:
   push:
     branches:
-      - "main"
+      - main
 
 jobs:
-  test:
+  sync:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "Hello from GitHub Actions"
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install requests python-dotenv openai
+
+      - name: Run sync script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER:   ${{ secrets.REPO_OWNER }}
+          REPO_NAME:    ${{ secrets.REPO_NAME }}
+          BASE_BRANCH:  ${{ secrets.BASE_BRANCH }}
+          HEAD_BRANCH:  ${{ secrets.HEAD_BRANCH }}
+          ENABLE_AI:    ${{ secrets.ENABLE_AI }}
+          DRY_RUN:      ${{ secrets.DRY_RUN }}
+        run: |
+          python sync.py
