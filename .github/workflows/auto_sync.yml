@@ -3,7 +3,7 @@ name: Test Workflow
 on:
   push:
     branches:
-      - "release*"
+      - "main"
 
 jobs:
   test:
