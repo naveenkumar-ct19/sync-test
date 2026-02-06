@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    environment {
+        GITHUB_TOKEN = credentials('github-token')
+        REPO_OWNER  = 'naveenkumar-ct19'
+        REPO_NAME   = 'sync-test'
+        BASE_BRANCH = 'develop'
+        HEAD_BRANCH = 'release'
+        PR_APPROVER_USERNAME = 'naveen218kumar-hue'
+        DRY_RUN = 'false'
+
+        CISCO_LLM_CLIENT_ID_1     = credentials('cisco-llm-client-id')
+        CISCO_LLM_CLIENT_SECRET_1 = credentials('cisco-llm-client-secret')
+        CISCO_OPENAI_APP_KEY_1    = credentials('cisco-openai-app-key')
+
+        CISCO_LLM_TOKEN_URL_1 = 'https://id.cisco.com/oauth2/default/v1/token'
+        CISCO_LLM_PAYLOAD_1   = 'grant_type=client_credentials'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Setup Python') {
+            steps {
+                sh '''
+                    cd sync-test
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Create .env') {
+            steps {
+                sh '''
+                    cd sync-test
+                    cat <<EOF > .env
+GITHUB_TOKEN=${GITHUB_TOKEN}
+REPO_OWNER=${REPO_OWNER}
+REPO_NAME=${REPO_NAME}
+BASE_BRANCH=${BASE_BRANCH}
+HEAD_BRANCH=${HEAD_BRANCH}
+PR_APPROVER_USERNAME=${PR_APPROVER_USERNAME}
+DRY_RUN=${DRY_RUN}
+
+CISCO_LLM_CLIENT_ID_1=${CISCO_LLM_CLIENT_ID_1}
+CISCO_LLM_CLIENT_SECRET_1=${CISCO_LLM_CLIENT_SECRET_1}
+CISCO_LLM_TOKEN_URL_1=${CISCO_LLM_TOKEN_URL_1}
+CISCO_LLM_PAYLOAD_1=${CISCO_LLM_PAYLOAD_1}
+CISCO_OPENAI_APP_KEY_1=${CISCO_OPENAI_APP_KEY_1}
+EOF
+                '''
+            }
+        }
+
+        stage('Get Cisco Token') {
+            steps {
+                sh '''
+                    cd sync-test
+                    . venv/bin/activate
+                    python3 access_token.py
+                '''
+            }
+        }
+
+        stage('Run Sync') {
+            steps {
+                sh '''
+                    cd sync-test
+                    . venv/bin/activate
+                    python3 sync.py
+                '''
+            }
+        }
+    }
+}
